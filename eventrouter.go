@@ -141,8 +141,10 @@ func (er *EventRouter) addEvent(obj interface{}) {
 func (er *EventRouter) updateEvent(objOld interface{}, objNew interface{}) {
 	eOld := objOld.(*v1.Event)
 	eNew := objNew.(*v1.Event)
-	prometheusEvent(eNew)
-	er.eSink.UpdateEvents(eNew, eOld)
+	if eOld.ResourceVersion != eNew.ResourceVersion {
+		prometheusEvent(eNew)
+		er.eSink.UpdateEvents(eNew, eOld)
+	}
 }
 
 // prometheusEvent is called when an event is added or updated
